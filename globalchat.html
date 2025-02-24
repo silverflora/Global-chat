@@ -1,0 +1,709 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login App</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .g-logo {
+        font-size: 10em;
+        font-family: sans-serif;
+        font-weight: bold;
+        position: relative;
+        width: 100%;
+        text-align: center;
+      }
+
+      .g-blue {
+        color: #4285F4;
+        position: relative;
+        z-index: 1;
+      }
+
+      .g-silver {
+        color: #BDBDBD;
+        position: absolute;
+        top: 0.2em;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      #app-content {
+        display: none;
+      }
+
+      .login-g-logo {
+        font-size: 4em;
+        font-family: sans-serif;
+        font-weight: bold;
+        position: relative;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .login-g-blue {
+        color: #4285F4;
+        position: relative;
+        z-index: 1;
+      }
+
+      .login-g-silver {
+        color: #BDBDBD;
+        position: absolute;
+        top: 0.1em;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      #createAccountOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #createAccountContent {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+      }
+
+      #nameInputs {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+      }
+
+      .nameBox {
+        width: 45%;
+      }
+
+      .nameBox label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+      }
+
+      .nameBox input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: white;
+      }
+
+      .sticker {
+        font-size: 5em;
+        margin-bottom: 20px;
+      }
+
+      #nowMessage {
+        color: #4285F4;
+      }
+
+      .back-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        z-index: 1002;
+      }
+
+      .back-button:hover {
+        background-color: #0056b3;
+      }
+
+      .back-button-container {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+
+      .back-button-blue-box {
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        z-index: 1002;
+        display: inline-block;
+      }
+
+      .back-button-blue-box a {
+        color: white;
+        text-decoration: none;
+        padding: 5px 10px;
+        display: block;
+      }
+
+      #phoneNumberOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1002;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #phoneNumberContent {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+      }
+
+      #passwordOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1003;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #passwordContent {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+      }
+
+      #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 1004;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      #homeScreen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+        z-index: 1005;
+      }
+
+      #homeButtons {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #homeButtons button {
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #homeButtons button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash-screen">
+      <div class="g-logo">
+        <span class="g-blue">G</span>
+        <span class="g-silver">G</span>
+      </div>
+    </div>
+
+    <div id="app-content" class="container">
+      <div class="login-g-logo">
+        <span class="login-g-blue">G</span>
+        <span class="login-g-silver">G</span>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="identifier">Phone Number:</label>
+          <input type="text" id="identifier" name="identifier" required="">
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required="">
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <div style="text-align: center; margin-top: 10px;">
+        <a href="#" id="createAccountLink" style="color: #4285F4; text-decoration: none;">Create an account</a>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <div id="createAccountOverlay">
+      <div id="createAccountContent">
+        <div class="back-button-container">
+          <div class="back-button-blue-box">
+            <a href="#" onclick="goBack('createAccountOverlay')">Back</a>
+          </div>
+        </div>
+        <h2>Create Account</h2>
+        <div id="nameInputs">
+          <div class="nameBox">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" maxlength="15">
+          </div>
+          <div class="nameBox">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" maxlength="15">
+          </div>
+        </div>
+        <div class="sticker">👋</div>
+        <p id="nowMessage">Now you can create an account in just a few steps. Tell us your first an last name upwards in the space</p>
+      </div>
+    </div>
+
+    <div id="phoneNumberOverlay">
+      <div id="phoneNumberContent">
+        <div class="back-button-container">
+          <div class="back-button-blue-box">
+            <a href="#" onclick="goBack('phoneNumberOverlay')">Back</a>
+          </div>
+        </div>
+        <h2>Phone Number</h2>
+        <p>To move to the next step, your phone number will need to be inserted below for further processing</p>
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input type="text" id="phoneNumber" name="phoneNumber">
+        </div>
+        <button id="phoneNumberNextButton" style="display: none;">Next</button>
+      </div>
+    </div>
+
+    <div id="passwordOverlay">
+      <div id="passwordContent">
+        <div class="back-button-container">
+          <div class="back-button-blue-box">
+            <a href="#" onclick="goBack('passwordOverlay')">Back</a>
+          </div>
+        </div>
+        <h2>Create Password</h2>
+        <p>Your account has almost been created, create a password to secure your account from strangers and hackers</p>
+        <div class="form-group">
+          <label for="newPassword">Password:</label>
+          <input type="password" id="newPassword" name="newPassword">
+        </div>
+        <button id="doneButton">Done</button>
+      </div>
+    </div>
+
+    <div id="loadingOverlay">
+      <div class="loader"></div>
+    </div>
+
+    <div id="homeScreen">
+      <div id="homeButtons">
+        <button>Home</button>
+        <button>Chat</button>
+        <button>Menu</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      function goBack(overlayId) {
+        document.getElementById(overlayId).style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
+body {
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+.error {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+
+#createAccountOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001; 
+  justify-content: center;
+  align-items: center;
+}
+
+#createAccountContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  position: relative; 
+}
+
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1004;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#homeScreen {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f4f4f4;
+  z-index: 1005;
+}
+
+#homeButtons {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#homeButtons button {
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#homeButtons button:hover {
+  background-color: #0056b3;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const loginForm = document.getElementById('loginForm');
+  const messageDiv = document.getElementById('message');
+  const createAccountLink = document.getElementById('createAccountLink');
+  const createAccountOverlay = document.getElementById('createAccountOverlay');
+  const lastNameInput = document.getElementById('lastName');
+  const firstNameInput = document.getElementById('firstName');
+  const createAccountContent = document.getElementById('createAccountContent');
+  const phoneNumberOverlay = document.getElementById('phoneNumberOverlay');
+  const phoneNumberContent = document.getElementById('phoneNumberContent');
+  const passwordOverlay = document.getElementById('passwordOverlay');
+  const passwordContent = document.getElementById('passwordContent');
+  const phoneNumberInput = document.getElementById('phoneNumber');
+  const phoneNumberNextButton = document.getElementById('phoneNumberNextButton');
+  const doneButton = document.getElementById('doneButton');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const homeScreen = document.getElementById('homeScreen');
+  let userData = {};
+
+  // Function to check network speed
+  function getNetworkSpeed() {
+    return new Promise((resolve) => {
+      const image = new Image();
+      const startTime = new Date().getTime();
+      image.src = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png?t=" + startTime; //Cache bust
+      image.onload = function() {
+        const endTime = new Date().getTime();
+        const duration = (endTime - startTime) / 1000;
+        const imageSize = 272 * 92; // Approximate size of the image in pixels
+        const speed = imageSize / duration; // Pixels per second
+        resolve(speed);
+      };
+      image.onerror = () => resolve(0); // Resolve with 0 if there is an error
+    });
+  }
+
+  // Determine splash screen duration based on network speed
+  getNetworkSpeed().then(speed => {
+    let splashDuration = 10000; // Default duration
+
+    if (speed < 10000) { // Adjust threshold as needed
+      splashDuration = 10000; // Extend duration for slower connections
+    }
+
+    // Simulate splash screen duration
+    setTimeout(() => {
+      document.getElementById('splash-screen').style.display = 'none';
+      document.getElementById('app-content').style.display = 'block'; // Show app content
+    }, splashDuration);
+  });
+
+  loginForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const identifier = document.getElementById('identifier').value;
+    const password = document.getElementById('password').value;
+
+    // Basic validation (you should add more robust validation)
+    if (!identifier || !password) {
+      displayMessage('error', 'Please enter both your Gmail/Phone and password.');
+      return;
+    }
+
+    // Simulate login process (replace with actual API call)
+    simulateLogin(identifier, password)
+      .then(response => {
+        if (response.success) {
+          displayMessage('success', response.message);
+          // Redirect or perform actions upon successful login
+        } else {
+          displayMessage('error', response.message);
+        }
+      })
+      .catch(error => {
+        displayMessage('error', 'An error occurred during login.');
+        console.error('Login error:', error);
+      });
+  });
+
+  function displayMessage(type, message) {
+    messageDiv.textContent = message;
+    messageDiv.className = 'message ' + type; // Set class for styling
+  }
+
+  // Simulated login function (replace with real API call)
+  function simulateLogin(identifier, password) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Replace with your actual authentication logic
+        if (identifier === 'test@example.com' && password === 'password') {
+          resolve({ success: true, message: 'Login successful!' });
+        } else if (identifier === '123-456-7890' && password === 'password') {
+           resolve({ success: true, message: 'Login successful!' });
+        }
+        else {
+          resolve({ success: false, message: 'Invalid credentials.' });
+        }
+      }, 1000); // Simulate a 1-second delay for the API call
+    });
+  }
+
+  // Event listener for the "Create an account" link
+  createAccountLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    createAccountOverlay.style.display = 'flex'; // Show the overlay
+  });
+
+  lastNameInput.addEventListener('input', function() {
+    const nextButton = document.getElementById('nextButton');
+    if (lastNameInput.value.trim() !== '') {
+      if (!nextButton) {
+        const newNextButton = document.createElement('button');
+        newNextButton.id = 'nextButton';
+        newNextButton.textContent = 'Next';
+        newNextButton.style.marginTop = '20px';
+        newNextButton.addEventListener('click', function() {
+          userData.firstName = firstNameInput.value;
+          userData.lastName = lastNameInput.value;
+          createAccountOverlay.style.display = 'none';
+          phoneNumberOverlay.style.display = 'flex';
+        });
+        createAccountContent.appendChild(newNextButton);
+      }
+    } else {
+      if (nextButton) {
+        nextButton.remove();
+      }
+    }
+  });
+
+  phoneNumberInput.addEventListener('input', function() {
+    if (phoneNumberInput.value.trim() !== '') {
+      phoneNumberNextButton.style.display = 'block';
+    } else {
+      phoneNumberNextButton.style.display = 'none';
+    }
+  });
+
+  phoneNumberNextButton.addEventListener('click', function() {
+    userData.phoneNumber = phoneNumberInput.value;
+    phoneNumberOverlay.style.display = 'none';
+    passwordOverlay.style.display = 'flex';
+  });
+
+  doneButton.addEventListener('click', function() {
+    userData.password = document.getElementById('newPassword').value;
+    // Save user data to local storage or a database
+    saveUserData(userData);
+
+    // Show loading overlay
+    loadingOverlay.style.display = 'flex';
+
+    // Simulate loading for 10 seconds
+    setTimeout(function() {
+      loadingOverlay.style.display = 'none';
+      homeScreen.style.display = 'block'; // Show the home screen
+    }, 10000);
+  });
+
+  function saveUserData(data) {
+    // For now, saving to local storage
+    localStorage.setItem('userData', JSON.stringify(data));
+    console.log('User data saved:', data);
+  }
+});
